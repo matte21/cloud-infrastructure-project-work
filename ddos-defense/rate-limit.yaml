@@ -9,7 +9,7 @@ metadata:
   namespace: molivi-dev
 spec:
   quotas:
-  - name: src-ip-dest-svc-rate-limit.quota.molivi-dev
+  - name: src-ip-dest-svc-rate-limit.quota
     # Such a low rate is used because the project this config belongs to is a demo:
     # we want a human user using the productpage app to notice that the rate limit
     # is enforced
@@ -36,8 +36,8 @@ metadata:
   name: product-page-limiter
   namespace: molivi-dev
 spec:
-  match: destination.service = "productpage.molivi-dev.svc.cluster.local"
+  match: destination.service == "productpage.molivi-dev.svc.cluster.local"
   actions:
-  - handler: rate-limiter.memquota.molivi-dev
+  - handler: rate-limiter.memquota
     instances: 
-    - src-ip-dest-svc-rate-limit.quota.molivi-dev   
+    - src-ip-dest-svc-rate-limit.quota   
