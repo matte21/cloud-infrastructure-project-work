@@ -1,0 +1,43 @@
+######################################################
+# This file defines handler, instance and rule to 
+# enable source IP to destination service rate limit 
+######################################################
+apiVersion: config.istio.io/v1alpha2
+kind: memquota
+metadata:
+  name: rate-limiter
+  namespace: molivi-dev
+spec:
+  quotas:
+  - name: src-ip-dest-svc-rate-limit.quota.molivi-dev
+    # Such a low rate is used because the project this config belongs to is a demo:
+    # we want a human user using the productpage app to notice that the rate limit
+    # is enforced
+    maxAmount: 3
+    validDuration: 30s  
+
+---
+
+apiVersion: config.istio.io/v1alpha2
+kind: quota
+metadata:
+  name: src-ip-dest-svc-rate-limit
+  namespace: molivi-dev
+spec:
+  dimensions:
+    sourceIP: source.ip | "unknown"
+    destinationService: destination.service | "unknown"
+
+---
+
+apiVersion: config.istio.io/v1alpha2
+kind: rule
+metadata:
+  name: product-page-limiter
+  namespace: molivi-dev
+spec:
+  match: destination.service = "productpage.molivi-dev.svc.cluster.local"
+  actions:
+  - handler: rate-limiter.memquota.molivi-dev
+    instances: 
+    - src-ip-dest-svc-rate-limit.quota.molivi-dev   
