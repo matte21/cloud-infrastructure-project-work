@@ -15,7 +15,7 @@ spec:
     # we want a human user using the productpage app to notice that the rate limit
     # is enforced
     maxAmount: 1
-    validDuration: 10s  
+    validDuration: 30s  
 
 ---
 
