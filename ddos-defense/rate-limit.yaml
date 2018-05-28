@@ -1,28 +1,29 @@
 ######################################################
-# This file defines handler, instance and rule to 
-# enable source IP to destination service rate limit 
+# This file defines handler, instance (quota), rule,
+# QuotaSpec and QuotaSpecBinding to enable rate limiting
+# to access the service productpage based on source IP. 
 ######################################################
 apiVersion: config.istio.io/v1alpha2
 kind: memquota
 metadata:
-  name: rate-limiter
-  namespace: molivi-dev
+  name: rate-limit
+  namespace: istio-system
 spec:
   quotas:
-  - name: src-ip-dest-svc-rate-limit.quota
+  - name: src-ip-dest-svc.quota.istio-system
     # Such a low rate is used because the project this config belongs to is a demo:
     # we want a human user using the productpage app to notice that the rate limit
     # is enforced
-    maxAmount: 3
-    validDuration: 30s  
+    maxAmount: 1
+    validDuration: 10s  
 
 ---
 
 apiVersion: config.istio.io/v1alpha2
 kind: quota
 metadata:
-  name: src-ip-dest-svc-rate-limit
-  namespace: molivi-dev
+  name: src-ip-dest-svc
+  namespace: istio-system
 spec:
   dimensions:
     sourceIP: source.ip | "unknown"
@@ -33,11 +34,39 @@ spec:
 apiVersion: config.istio.io/v1alpha2
 kind: rule
 metadata:
-  name: product-page-limiter
-  namespace: molivi-dev
+  name: productpage-limiter
+  namespace: istio-system
 spec:
   match: destination.service == "productpage.molivi-dev.svc.cluster.local"
   actions:
-  - handler: rate-limiter.memquota
+  - handler: rate-limit.memquota
     instances: 
-    - src-ip-dest-svc-rate-limit.quota   
+    - src-ip-dest-svc.quota   
+
+---
+
+apiVersion: config.istio.io/v1alpha2
+kind: QuotaSpec
+metadata:
+  name: count-by-one
+  namespace: istio-system
+spec:
+  rules:
+  - quotas:
+    - charge: 1
+      quota: src-ip-dest-svc
+
+---
+
+apiVersion: config.istio.io/v1alpha2
+kind: QuotaSpecBinding
+metadata:
+  name: count-by-one-productpage
+  namespace: istio-system
+spec:
+  quotaSpecs:
+  - name: count-by-one
+    namespace: istio-system
+  services:
+  - name: productpage
+    namespace: molivi-dev
