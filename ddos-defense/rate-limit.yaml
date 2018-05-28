@@ -26,7 +26,7 @@ metadata:
   namespace: istio-system
 spec:
   dimensions:
-    sourceIP: source.ip | "unknown"
+    sourceIP: request.headers["x-forwarded-for"] | "unknown"
     destinationService: destination.service | "unknown"
 
 ---
