@@ -37,7 +37,6 @@ metadata:
   name: productpage-limiter
   namespace: istio-system
 spec:
-  match: destination.service == "productpage.molivi-dev.svc.cluster.local"
   actions:
   - handler: rate-limit.memquota
     instances: 
