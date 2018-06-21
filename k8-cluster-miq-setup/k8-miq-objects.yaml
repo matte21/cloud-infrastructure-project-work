@@ -1,0 +1,57 @@
+##########################################################################
+# This file contains the definition of the K8s namespaces and             #
+# service accounts ManageIQ needs to be defined in a K8s cluster          #    
+# to be able to set up a K8s provider that manages that cluster.          #
+# It was written using the instructions at                                #
+# http://manageiq.org/docs/guides/providers/kubernetes as a guide.        #
+# Notice how at that link everything is done imperatively (i.e.           #
+# "kubectl create ...") and object configs are specificed as CLI args.    # 
+# This file is the "translation" of those configs of K8s objects          #
+# to a .yaml config file, and it's meant to be used with "kubectl apply". #
+##########################################################################
+
+---
+
+apiVersion: v1
+kind: Namespace
+metadata: 
+  annotations: 
+    ns-config-copied-from: http://manageiq.org/docs/guides/providers/kubernetes
+  name: management-infra
+
+---
+
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  annotations: 
+    sa-config-copied-from: http://manageiq.org/docs/guides/providers/kubernetes
+  name: management-admin
+  namespace: management-infra
+
+---
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  annotations: 
+    sa-config-copied-from: http://manageiq.org/docs/guides/providers/kubernetes
+  name: inspector-admin
+  namespace: management-infra
+
+---
+
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata: 
+  - name: management-infra-cluster-reader
+subjects:
+  - kind: User
+    name: system:serviceaccount:management-infra:management-admin
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: cluster-reader
+  apiGroup: rbac.authorization.k8s.io
+
+---
