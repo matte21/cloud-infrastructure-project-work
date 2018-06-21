@@ -48,9 +48,9 @@ metadata:
   annotations: 
     binding-config-copied-from: http://manageiq.org/docs/guides/providers/kubernetes
 subjects:
-  - kind: User
-    name: system:serviceaccount:management-infra:management-admin
-    apiGroup: rbac.authorization.k8s.io
+- kind: User
+  name: system:serviceaccount:management-infra:management-admin
+  apiGroup: rbac.authorization.k8s.io
 roleRef:
   kind: ClusterRole
   name: cluster-reader
