@@ -32,7 +32,7 @@ metadata:
 ---
 
 apiVersion: v1
-kind: Namespace
+kind: ServiceAccount
 metadata:
   annotations: 
     sa-config-copied-from: http://manageiq.org/docs/guides/providers/kubernetes
