@@ -41,10 +41,12 @@ metadata:
 
 ---
 
-kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
 metadata: 
-  - name: management-infra-cluster-reader
+  name: management-infra-cluster-reader
+  annotations: 
+    binding-config-copied-from: http://manageiq.org/docs/guides/providers/kubernetes
 subjects:
   - kind: User
     name: system:serviceaccount:management-infra:management-admin
