@@ -50,7 +50,7 @@ metadata:
     copied-from-openshift-v: 3.9
 rules:
 - apiGroups: ["apiregistration"]
-  resources: ["apiservices.apiregistration.k8s.io", "apiservices.apiregistration.k8s.io/status", "appliedclusterresourcequotas"]
+  resources: ["apiservices.apiregistration.k8s.io", "apiservices.apiregistration.k8s.io/status"]
   verbs: ["get", "list", "watch"]
 - nonResourceURLs: ["*"]
   verbs: ["get"]
